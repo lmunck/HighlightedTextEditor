@@ -14,13 +14,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         public let textView: SystemTextView
         public let scrollView: SystemScrollView?
     }
-
-    @Binding var text: String {
-        didSet {
-            onTextChange?(text)
-        }
-    }
-
+    
     let highlightRules: [HighlightRule]
 
     private(set) var onEditingChanged: OnEditingChangedCallback?
@@ -67,6 +61,8 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         runIntrospect(uiView)
         uiView.isScrollEnabled = true
         uiView.selectedTextRange = context.coordinator.selectedTextRange
+        
+        
         context.coordinator.updatingUIView = false
     }
 
@@ -96,6 +92,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
+            parent.fixedSize() // Added
             selectedTextRange = textView.selectedTextRange
         }
 
