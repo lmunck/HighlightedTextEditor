@@ -23,6 +23,8 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var onSelectionChange: OnSelectionChangeCallback?
     private(set) var introspect: IntrospectCallback?
 
+    @Binding var text: String
+    
     public init(
         text: Binding<String>,
         highlightRules: [HighlightRule]
@@ -92,7 +94,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
-            parent.fixedSize() // Added
+            parent.fixedSize() // Added to fix height issue
             selectedTextRange = textView.selectedTextRange
         }
 
