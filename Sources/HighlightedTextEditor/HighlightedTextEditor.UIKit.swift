@@ -28,11 +28,9 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     
     public init(
         text: Binding<String>,
-        height: Binding<CGFloat>,
         highlightRules: [HighlightRule]
     ) {
         _text = text
-        _height = height
         self.highlightRules = highlightRules
     }
 
@@ -64,8 +62,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         }
         updateTextViewModifiers(uiView)
         runIntrospect(uiView)
-        updateHeight(uiView) // Update height
-        
+        uiView.isScrollEnabled = true
         uiView.selectedTextRange = context.coordinator.selectedTextRange
         
         
@@ -83,15 +80,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         let textInputTraits = textView.value(forKey: "textInputTraits") as? NSObject
         textInputTraits?.setValue(textView.tintColor, forKey: "insertionPointColor")
     }
-    
-    private func updateHeight(_ textView: UITextView) {
-        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        if textView.frame.height != newSize.height {
-            DispatchQueue.main.async {
-                self.height = newSize.height
-            }
-        }
-    }
 
     public final class Coordinator: NSObject, UITextViewDelegate {
         var parent: HighlightedTextEditor
@@ -107,7 +95,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
-            parent.updateHeight(textView) // Set height
+            parent.fixedSize() // Added
             selectedTextRange = textView.selectedTextRange
         }
 
@@ -126,8 +114,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         public func textViewDidEndEditing(_ textView: UITextView) {
             parent.onCommit?()
         }
-        
-        
     }
 }
 
@@ -164,7 +150,5 @@ public extension HighlightedTextEditor {
         new.onTextChange = callback
         return new
     }
-    
-    
 }
 #endif
