@@ -24,12 +24,15 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var introspect: IntrospectCallback?
 
     @Binding var text: String
+    @Binding var height: CGFloat // Make height auto-adjust to content in UIView
     
     public init(
         text: Binding<String>,
+        height: Binding<CGFloat>,
         highlightRules: [HighlightRule]
     ) {
         _text = text
+        _height = height
         self.highlightRules = highlightRules
     }
 
@@ -61,7 +64,8 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         }
         updateTextViewModifiers(uiView)
         runIntrospect(uiView)
-        uiView.isScrollEnabled = true
+        updateHeight(uiView) // Update height
+        
         uiView.selectedTextRange = context.coordinator.selectedTextRange
         
         
@@ -94,7 +98,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
-            parent.fixedSize() // Added to fix height issue
+            parent.updateHeight(textView) // Set height
             selectedTextRange = textView.selectedTextRange
         }
 
@@ -113,6 +117,8 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         public func textViewDidEndEditing(_ textView: UITextView) {
             parent.onCommit?()
         }
+        
+        
     }
 }
 
@@ -148,6 +154,15 @@ public extension HighlightedTextEditor {
         var new = self
         new.onTextChange = callback
         return new
+    }
+    
+    func updateHeight(_ textView: UITextView) {
+        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        if textView.frame.height != newSize.height {
+            DispatchQueue.main.async {
+                self.height = newSize.height
+            }
+        }
     }
 }
 #endif
