@@ -24,7 +24,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var introspect: IntrospectCallback?
 
     @Binding var text: String
-    @Binding var height: CGFloat // Make height auto-adjust to content in UIView
     
     public init(
         text: Binding<String>,
@@ -95,7 +94,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
-            parent.fixedSize() // Added
             selectedTextRange = textView.selectedTextRange
         }
 
