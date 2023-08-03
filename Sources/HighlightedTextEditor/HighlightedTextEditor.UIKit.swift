@@ -22,6 +22,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var onTextChange: OnTextChangeCallback?
     private(set) var onSelectionChange: OnSelectionChangeCallback?
     private(set) var introspect: IntrospectCallback?
+    private(set) var onHeightChange: OnHeightChangeCallback?
 
     @Binding var text: String
     
@@ -93,6 +94,12 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             // For Multistage Text Input
             guard textView.markedTextRange == nil else { return }
 
+            // Update height
+            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+            if textView.frame.height != newSize.height {
+                onHeightChange(newSize.height)
+            }
+            
             parent.text = textView.text
             selectedTextRange = textView.selectedTextRange
         }
@@ -130,7 +137,7 @@ public extension HighlightedTextEditor {
         }
         return new
     }
-
+    
     func onCommit(_ callback: @escaping OnCommitCallback) -> Self {
         var new = self
         new.onCommit = callback
@@ -146,6 +153,14 @@ public extension HighlightedTextEditor {
     func onTextChange(_ callback: @escaping OnTextChangeCallback) -> Self {
         var new = self
         new.onTextChange = callback
+        return new
+    }
+    
+    func onHeightChange(_ callback: @escaping (_ currentHeight: CGFloat) -> Void) -> Self {
+        var new = self
+        new.onHeightChange = { height in
+            callback(height)
+        }
         return new
     }
 }

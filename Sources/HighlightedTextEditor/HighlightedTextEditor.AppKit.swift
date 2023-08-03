@@ -31,6 +31,7 @@ public struct HighlightedTextEditor: NSViewRepresentable, HighlightingTextEditor
     private(set) var onTextChange: OnTextChangeCallback?
     private(set) var onSelectionChange: OnSelectionChangeCallback?
     private(set) var introspect: IntrospectCallback?
+    private(set) var onHeightChange: OnHeightChangeCallback?
 
     public init(
         text: Binding<String>,
@@ -274,6 +275,14 @@ public extension HighlightedTextEditor {
             callback(range)
         }
         return editor
+    }
+    
+    func onHeightChange(_ callback: @escaping (_ currentHeight: CGFloat) -> Void) -> Self {
+        var new = self
+        new.onHeightChange = { height in
+            callback(height)
+        }
+        return new
     }
 }
 #endif
