@@ -105,7 +105,7 @@ public extension HighlightedTextEditor {
         public func textDidChange(_ notification: Notification) {
             guard let textView = notification.object as? NSTextView else { return }
             let content = String(textView.textStorage?.string ?? "")
-
+            
             parent.text = content
             selectedRanges = textView.selectedRanges
         }
@@ -277,12 +277,5 @@ public extension HighlightedTextEditor {
         return editor
     }
     
-    func onHeightChange(_ callback: @escaping (_ currentHeight: CGFloat) -> Void) -> Self {
-        var new = self
-        new.onHeightChange = { height in
-            callback(height)
-        }
-        return new
-    }
 }
 #endif
