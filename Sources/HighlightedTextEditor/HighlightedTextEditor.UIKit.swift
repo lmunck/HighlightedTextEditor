@@ -83,6 +83,15 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         let textInputTraits = textView.value(forKey: "textInputTraits") as? NSObject
         textInputTraits?.setValue(textView.tintColor, forKey: "insertionPointColor")
     }
+    
+    private func updateHeight(_ textView: UITextView) {
+        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        if textView.frame.height != newSize.height {
+            DispatchQueue.main.async {
+                self.height = newSize.height
+            }
+        }
+    }
 
     public final class Coordinator: NSObject, UITextViewDelegate {
         var parent: HighlightedTextEditor
@@ -156,13 +165,6 @@ public extension HighlightedTextEditor {
         return new
     }
     
-    func updateHeight(_ textView: UITextView) {
-        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        if textView.frame.height != newSize.height {
-            DispatchQueue.main.async {
-                self.height = newSize.height
-            }
-        }
-    }
+    
 }
 #endif
