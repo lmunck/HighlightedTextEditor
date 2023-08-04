@@ -95,19 +95,25 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             // For Multistage Text Input
             guard textView.markedTextRange == nil else { return }
 
+            
+            
             // Update height
             guard let onHeightChange = parent.onHeightChange,
                     !updatingUIView
             else { return }
             let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
             if textView.frame.height != newSize.height {
-                
                 viewHeight = newSize.height
+                parent.text = textView.text
+                selectedTextRange = textView.selectedTextRange
+                
                 onHeightChange(newSize.height)
+            } else {
+                parent.text = textView.text
+                selectedTextRange = textView.selectedTextRange
+                
             }
             
-            parent.text = textView.text
-            selectedTextRange = textView.selectedTextRange
         }
 
         public func textViewDidChangeSelection(_ textView: UITextView) {
