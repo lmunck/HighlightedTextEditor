@@ -84,6 +84,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     public final class Coordinator: NSObject, UITextViewDelegate {
         var parent: HighlightedTextEditor
         var selectedTextRange: UITextRange?
+        var viewHeight: CGFloat?
         var updatingUIView = false
 
         init(_ markdownEditorView: HighlightedTextEditor) {
@@ -94,14 +95,19 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             // For Multistage Text Input
             guard textView.markedTextRange == nil else { return }
 
-            // Update height
-            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-            if textView.frame.height != newSize.height {
-                onHeightChange(newSize.height)
-            }
-            
             parent.text = textView.text
             selectedTextRange = textView.selectedTextRange
+            
+            // Update height
+            guard let onHeightChange = parent.onHeightChange,
+                    !updatingUIView
+            else { return }
+            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+            if textView.frame.height != newSize.height {
+                
+                viewHeight = newSize.height
+                onHeightChange(newSize.height)
+            }
         }
 
         public func textViewDidChangeSelection(_ textView: UITextView) {
