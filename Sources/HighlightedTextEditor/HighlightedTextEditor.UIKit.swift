@@ -45,7 +45,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         textView.delegate = context.coordinator
         updateTextViewModifiers(textView)
         
-        updateHeight(uiView)
+        updateHeight(textView)
         return textView
     }
 
