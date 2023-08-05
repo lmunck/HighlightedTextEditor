@@ -43,6 +43,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     public func makeUIView(context: Context) -> UITextView {
         let textView = UITextView()
         textView.delegate = context.coordinator
+        updateHeight(textView)
         updateTextViewModifiers(textView)
         
         return textView
