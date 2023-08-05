@@ -85,7 +85,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     
     private func updateHeight(_ textView: UITextView) {
         let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-        if textView.frame.height != newSize.height && abs(newSize.height - textView.frame.height) < 100 {
+        if self.height != newSize.height {
             DispatchQueue.main.async {
                 print("New height: \(newSize.height)")
                 self.height = newSize.height
