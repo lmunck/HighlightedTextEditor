@@ -44,7 +44,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         let textView = UITextView()
         textView.delegate = context.coordinator
         updateTextViewModifiers(textView)
-        updateHeight(textView)
         
         return textView
     }
@@ -87,6 +86,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
         if textView.frame.height != newSize.height {
             DispatchQueue.main.async {
+                print("New height: \(newSize.height)")
                 self.height = newSize.height
             }
         }
