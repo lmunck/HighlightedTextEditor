@@ -45,6 +45,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         textView.delegate = context.coordinator
         updateTextViewModifiers(textView)
         
+        updateHeight(uiView)
         return textView
     }
 
@@ -52,7 +53,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         uiView.isScrollEnabled = false
         context.coordinator.updatingUIView = true
         
-        updateHeight(uiView)
         let highlightedText = HighlightedTextEditor.getHighlightedText(
             text: text,
             highlightRules: highlightRules
@@ -126,6 +126,11 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
 
         public func textViewDidEndEditing(_ textView: UITextView) {
             parent.onCommit?()
+        }
+        
+        public func textView(_ textView: UITextView, shouldChangeTextIn range: NSRange, replacementText text: String) -> Bool {
+            parent.updateHeight(textView)
+            return true
         }
     }
 }
