@@ -107,7 +107,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             guard textView.markedTextRange == nil else { return }
 
             parent.text = textView.text
-            parent.updateHeight(textView)
+            //parent.updateHeight(textView)
             selectedTextRange = textView.selectedTextRange
             
         }
