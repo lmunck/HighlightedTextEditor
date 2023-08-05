@@ -31,7 +31,6 @@ public struct HighlightedTextEditor: NSViewRepresentable, HighlightingTextEditor
     private(set) var onTextChange: OnTextChangeCallback?
     private(set) var onSelectionChange: OnSelectionChangeCallback?
     private(set) var introspect: IntrospectCallback?
-    private(set) var onHeightChange: OnHeightChangeCallback?
 
     public init(
         text: Binding<String>,
