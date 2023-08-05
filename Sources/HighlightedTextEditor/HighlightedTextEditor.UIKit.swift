@@ -65,7 +65,7 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         updateTextViewModifiers(uiView)
         updateHeight(uiView)
         runIntrospect(uiView)
-        uiView.isScrollEnabled = true
+        uiView.isScrollEnabled = false
         uiView.selectedTextRange = context.coordinator.selectedTextRange
         
         context.coordinator.updatingUIView = false
