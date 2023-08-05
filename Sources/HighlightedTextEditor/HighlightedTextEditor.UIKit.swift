@@ -22,15 +22,17 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
     private(set) var onTextChange: OnTextChangeCallback?
     private(set) var onSelectionChange: OnSelectionChangeCallback?
     private(set) var introspect: IntrospectCallback?
-    private(set) var onHeightChange: OnHeightChangeCallback?
 
     @Binding var text: String
+    @Binding var height: CGFloat
     
     public init(
         text: Binding<String>,
+        height: Binding<CGFloat>,
         highlightRules: [HighlightRule]
     ) {
         _text = text
+        _height = height
         self.highlightRules = highlightRules
     }
 
@@ -65,7 +67,6 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         uiView.isScrollEnabled = true
         uiView.selectedTextRange = context.coordinator.selectedTextRange
         
-        
         context.coordinator.updatingUIView = false
     }
 
@@ -80,11 +81,19 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         let textInputTraits = textView.value(forKey: "textInputTraits") as? NSObject
         textInputTraits?.setValue(textView.tintColor, forKey: "insertionPointColor")
     }
+    
+    private func updateHeight(_ textView: UITextView) {
+        let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
+        if textView.frame.height != newSize.height {
+            DispatchQueue.main.async {
+                self.height = newSize.height
+            }
+        }
+    }
 
     public final class Coordinator: NSObject, UITextViewDelegate {
         var parent: HighlightedTextEditor
         var selectedTextRange: UITextRange?
-        var viewHeight: CGFloat?
         var updatingUIView = false
 
         init(_ markdownEditorView: HighlightedTextEditor) {
@@ -95,24 +104,8 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
             // For Multistage Text Input
             guard textView.markedTextRange == nil else { return }
 
-            
-            
-            // Update height
-            guard let onHeightChange = parent.onHeightChange,
-                    !updatingUIView
-            else { return }
-            let newSize = textView.sizeThatFits(CGSize(width: textView.frame.size.width, height: CGFloat.greatestFiniteMagnitude))
-            if textView.frame.height != newSize.height {
-                viewHeight = newSize.height
                 parent.text = textView.text
                 selectedTextRange = textView.selectedTextRange
-                
-                onHeightChange(newSize.height)
-            } else {
-                parent.text = textView.text
-                selectedTextRange = textView.selectedTextRange
-                
-            }
             
         }
 
@@ -168,12 +161,5 @@ public extension HighlightedTextEditor {
         return new
     }
     
-    func onHeightChange(_ callback: @escaping (_ currentHeight: CGFloat) -> Void) -> Self {
-        var new = self
-        new.onHeightChange = { height in
-            callback(height)
-        }
-        return new
-    }
 }
 #endif
