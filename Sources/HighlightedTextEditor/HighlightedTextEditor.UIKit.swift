@@ -104,10 +104,10 @@ public struct HighlightedTextEditor: UIViewRepresentable, HighlightingTextEditor
         public func textViewDidChange(_ textView: UITextView) {
             // For Multistage Text Input
             guard textView.markedTextRange == nil else { return }
-            parent.updateHeight(textView)
 
-                parent.text = textView.text
-                selectedTextRange = textView.selectedTextRange
+            parent.text = textView.text
+            parent.updateHeight(textView)
+            selectedTextRange = textView.selectedTextRange
             
         }
 
